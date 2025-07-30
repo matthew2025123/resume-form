@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="zh-TW"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>應徵人員履歷表</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/emailjs-com/3.2.0/email.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            line-height: 1.4;
+            color: #333;
+            background: linear-gradient(135deg, #f8f4ff, #ede5ff);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(123, 67, 151, 0.15);
+            border: 2px solid rgba(123, 67, 151, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #7b4397;
+            color: white;
+            border-radius: 8px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #7b4397;
+            font-size: 18px;
+        }
+        
+        .company-info {
+            text-align: left;
+        }
+        
+        .company-name-zh {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .company-name-en {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .form-code {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .resume-title {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .resume-title h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .form-number {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .table-section {
+            border: 2px solid #7b4397;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .section-title {
+            background: #7b4397;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .form-table td, .form-table th {
+            border: 1px solid #7b4397;
+            padding: 8px;
+            vertical-align: middle;
+            font-size: 13px;
+        }
+        
+        .form-table th {
+            background: #f8f4ff;
+            font-weight: bold;
+            text-align: center;
+            color: #7b4397;
+        }
+        
+        .label-cell {
+            background: #f8f4ff;
+            font-weight: bold;
+            text-align: center;
+            color: #7b4397;
+            width: 120px;
+        }
+        
+        .input-cell {
+            background: white;
+        }
+        
+        input[type="text"], input[type="email"], input[type="tel"], input[type="date"], 
+        input[type="number"], select, textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 4px 6px;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #7b4397;
+        }
+        
+        .checkbox-group, .radio-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-item, .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 12px;
+        }
+        
+        .checkbox-item input, .radio-item input {
+            width: auto;
+            margin: 0;
+        }
+        
+        .photo-placeholder {
+            width: 120px;
+            height: 150px;
+            border: 2px dashed #7b4397;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #7b4397;
+            margin: 0 auto;
+        }
+        
+        .dynamic-row {
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .add-row-btn {
+            background: #7b4397;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+        }
+        
+        .add-row-btn:hover {
+            background: #8b4ea7;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        .signature-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f4ff;
+            border: 2px solid #7b4397;
+            border-radius: 8px;
+        }
+        
+        .signature-canvas {
+            border: 2px solid #7b4397;
+            border-radius: 5px;
+            background: white;
+            cursor: crosshair;
+            margin: 10px 0;
+        }
+        
+        .signature-controls {
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .signature-btn {
+            background: #7b4397;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            margin: 0 5px;
+        }
+        
+        .signature-btn.clear {
+            background: #dc3545;
+        }
+        
+        .signature-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .submit-btn {
+            background: #7b4397;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            font-weight: bold;
+        }
+        
+        .submit-btn:hover {
+            background: #8b4ea7;
+        }
+        
+        .required {
+            color: #dc3545;
+        }
+        
+        .note {
+            font-size: 11px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #7b4397;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-table td, .form-table th {
+                padding: 4px;
+                font-size: 11px;
+            }
+            
+            .logo-section {
+                flex-direction: column;
+            }
+            
+            .company-logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 表頭 -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="company-logo">AOI</div>
+                <div class="company-info">
+                    <div class="company-name-zh">英屬維京群島商祥茂光電科技股份有限公司台灣分公司</div>
+                    <div class="company-name-en">Prime World International Holdings Ltd., Taiwan Branch</div>
+                    <div class="form-code">HR-4004G</div>
+                </div>
+            </div>
+            <div class="resume-title">
+                <h1>應徵人員履歷表</h1>
+                <div style="font-size: 16px;">RESUME</div>
+            </div>
+        </div>
+
+        <form id="resumeForm">
+            <!-- 編號與應徵職務 -->
+            <div class="form-number">
+                <div>編號：<input type="text" name="number" style="width: 100px;" placeholder="由公司填寫"></div>
+                <div><span class="required">*</span>應徵職務：<input type="text" name="position" style="width: 200px;" required=""></div>
+                <div>報到日：<input type="date" name="reportDate" style="width: 150px;"></div>
+            </div>
+
+            <!-- 一、個人基本資料 -->
+            <div class="table-section">
+                <div class="section-title">一、個人基本資料 PERSONAL INFO.</div>
+                <table class="form-table">
+                    <tbody><tr>
+                        <td class="label-cell"><span class="required">*</span>中文姓名<br>NAME</td>
+                        <td class="input-cell">
+                            <input type="text" name="chineseName" required="">
+                        </td>
+                        <td class="label-cell"><span class="required">*</span>英文名<br>NAME</td>
+                        <td class="input-cell">
+                            <input type="text" name="englishName" required="">
+                        </td>
+                        <td class="label-cell">性別<br>GENDER</td>
+                        <td class="input-cell">
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="gender" value="男" id="male">
+                                    <label for="male">男 M</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="gender" value="女" id="female">
+                                    <label for="female">女 F</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td rowspan="4" style="text-align: center; width: 130px;">
+                            <div class="photo-placeholder">
+                                &lt;照片&gt;
+                            </div>
+                            <input type="file" accept="image/*" style="font-size: 10px; margin-top: 10px; width: 120px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">出生地<br>BIRTH PLACE</td>
+                        <td class="input-cell">
+                            <input type="text" name="birthPlace">
+                        </td>
+                        <td class="label-cell"><span class="required">*</span>身份證號<br>I.D.NO</td>
+                        <td class="input-cell">
+                            <input type="text" name="idNumber" required="">
+                        </td>
+                        <td class="label-cell">生日<br>DATE OF BIRTH</td>
+                        <td class="input-cell">
+                            <input type="date" name="birthday">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">婚姻<br>MARITAL STATUS</td>
+                        <td class="input-cell">
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="radio" name="marital" value="未婚" id="single">
+                                    <label for="single">未婚 SINGLE</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" name="marital" value="已婚" id="married">
+                                    <label for="married">已婚 MARRIED</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" name="marital" value="離婚" id="divorced">
+                                    <label for="divorced">離婚 DIVORCED</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" name="marital" value="其他" id="maritalOther">
+                                    <label for="maritalOther">其他 OTHER</label>
+                                    <input type="text" name="maritalOtherText" style="width: 60px;" placeholder="">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="label-cell">駕照<br>DRIVING LICENSE</td>
+                        <td class="input-cell">
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="radio" name="license" value="無" id="noLicense">
+                                    <label for="noLicense">無 NO</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" name="license" value="有" id="hasLicense">
+                                    <label for="hasLicense">有 YES</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="label-cell">交通工具<br>TYPE OF TRANSPORT</td>
+                        <td class="input-cell">
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="transport" value="公車" id="bus">
+                                    <label for="bus">公車 BUS</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="transport" value="汽車" id="car">
+                                    <label for="car">汽車 CAR</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="transport" value="機車" id="scooter">
+                                    <label for="scooter">機車 SCOOTER</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <label>其他OTHER</label>
+                                    <input type="text" name="transportOther" style="width: 80px;">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><span class="required">*</span>電郵位址<br>E-MAIL</td>
+                        <td colspan="5" class="input-cell">
+                            <input type="email" name="email" required="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><span class="required">*</span>戶籍地址<br>PERMANENT ADDRESS</td>
+                        <td colspan="3" class="input-cell">
+                            <input type="text" name="permanentAddress" required="">
+                        </td>
+                        <td class="label-cell"><span class="required">*</span>電話<br>TEL</td>
+                        <td class="input-cell">
+                            <input type="tel" name="phone" required="">
+                        </td>
+                        <td class="input-cell"></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><span class="required">*</span>通訊地址<br>PRESENT ADDRESS</td>
+                        <td colspan="3" class="input-cell">
+                            <input type="text" name="presentAddress" required="">
+                            <div style="margin-top: 5px;">
+                                <input type="checkbox" id="sameAddress" onchange="copyAddress()">
+                                <label for="sameAddress" style="font-size: 11px;">同戶籍地址</label>
+                            </div>
+                        </td>
+                        <td class="label-cell"><span class="required">*</span>行動電話<br>MOBILE PHONE</td>
+                        <td class="input-cell">
+                            <input type="tel" name="mobile" required="">
+                        </td>
+                        <td class="input-cell"></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><span class="required">*</span>緊急聯絡人<br>CONTACT PERSON</td>
+                        <td class="input-cell">
+                            <input type="text" name="emergencyContact" required="">
+                        </td>
+                        <td class="label-cell"><span class="required">*</span>關係<br>RELATIONSHIP</td>
+                        <td class="input-cell">
+                            <input type="text" name="relationship" required="">
+                        </td>
+                        <td class="label-cell"><span class="required">*</span>緊急聯絡人電話<br>CONTACT NUMBER</td>
+                        <td colspan="2" class="input-cell">
+                            <input type="tel" name="emergencyPhone" required="">
+                        </td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 兵役、信用、前科紀錄 -->
+            <div class="table-section">
+                <table class="form-table">
+                    <tbody><tr>
+                        <th style="width: 33%;">兵役 MILITARY STATUS</th>
+                        <th style="width: 33%;">信用紀錄 CREDIT RECORD</th>
+                        <th style="width: 34%;">前科紀錄 CRIME RECORD</th>
+                    </tr>
+                    <tr>
+                        <td class="input-cell">
+                            <div class="checkbox-group" style="flex-direction: column; gap: 5px;">
+                                <div class="checkbox-item">
+                                    <input type="radio" name="military" value="役畢" id="served">
+                                    <label for="served">役畢 MILITARY SERVICE</label>
+                                </div>
+                                <div>兵種 BRANCHES OF SERVICE：<input type="text" name="militaryBranch" style="width: 120px;"></div>
+                                <div>退伍日 DATE OF DEMOBILIZATION：<input type="date" name="demobilizationDate" style="width: 120px;"></div>
+                                <div class="checkbox-item">
+                                    <input type="radio" name="military" value="免役" id="exempt">
+                                    <label for="exempt">免役 EXEMPT</label>
+                                </div>
+                                <div>原因 CAUSE：<input type="text" name="exemptReason" style="width: 120px;"></div>
+                            </div>
+                        </td>
+                        <td class="input-cell">
+                            <div class="checkbox-group" style="flex-direction: column; gap: 5px;">
+                                <div class="checkbox-item">
+                                    <input type="radio" name="credit" value="良好" id="creditGood">
+                                    <label for="creditGood">良好 GOOD</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" name="credit" value="不良紀錄" id="creditBad">
+                                    <label for="creditBad">不良紀錄 BAD RECORD</label>
+                                </div>
+                                <div>原因 CAUSE：<textarea name="creditReason" rows="3" style="width: 100%;"></textarea></div>
+                            </div>
+                        </td>
+                        <td class="input-cell">
+                            <div class="checkbox-group" style="flex-direction: column; gap: 5px;">
+                                <div class="checkbox-item">
+                                    <input type="radio" name="criminal" value="良好" id="criminalGood">
+                                    <label for="criminalGood">良好 GOOD</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="radio" name="criminal" value="不良紀錄" id="criminalBad">
+                                    <label for="criminalBad">不良紀錄 BAD RECORD</label>
+                                </div>
+                                <div>原因 CAUSE：<textarea name="criminalReason" rows="3" style="width: 100%;"></textarea></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 健康狀況 -->
+            <div class="table-section">
+                <div class="section-title">健康 HEALTH STATUS</div>
+                <table class="form-table">
+                    <tbody><tr>
+                        <td class="input-cell" colspan="6">
+                            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                                <div class="checkbox-group" style="flex-direction: column;">
+                                    <div class="checkbox-item">
+                                        <input type="radio" name="health" value="良好" id="healthGood">
+                                        <label for="healthGood">良好 GOOD</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="radio" name="health" value="身心障礙手冊" id="disability">
+                                        <label for="disability">身心障礙手冊</label>
+                                    </div>
+                                    <div>等級：<input type="text" name="disabilityLevel" style="width: 60px;"> 類別：<input type="text" name="disabilityType" style="width: 80px;"></div>
+                                </div>
+                                <div class="checkbox-group" style="flex-direction: column;">
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="surgery" id="surgery">
+                                        <label for="surgery">曾經開刀 HAVE HAD AN OPERATION</label>
+                                    </div>
+                                    <div>原因 CAUSE：<input type="text" name="surgeryReason" style="width: 150px;"></div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="hereditary" id="hereditary">
+                                        <label for="hereditary">遺傳疾病 HEREDITARY DISEASE</label>
+                                    </div>
+                                    <div>原因 CAUSE：<input type="text" name="hereditaryReason" style="width: 150px;"></div>
+                                </div>
+                                <div class="checkbox-group" style="flex-direction: column;">
+                                    <div>法定傳染病 INFECTIOUS DISEASE</div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="infectious" value="曾經有" id="infectiousPast">
+                                        <label for="infectiousPast">曾經有 ONCE</label>
+                                    </div>
+                                    <div class="checkbox-item">
+                                        <input type="checkbox" name="infectious" value="現在有" id="infectiousCurrent">
+                                        <label for="infectiousCurrent">現在有 PRESENT</label>
+                                    </div>
+                                    <div>原因 CAUSE：<input type="text" name="infectiousReason" style="width: 100px;"></div>
+                                </div>
+                                <div>
+                                    <div>血型 BLOOD：<input type="text" name="bloodType" style="width: 60px;"></div>
+                                    <div>體重 WEIGHT：<input type="number" name="weight" style="width: 80px;"></div>
+                                    <div>身高 HEIGHT：<input type="number" name="height" style="width: 80px;"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 二、教育程度 -->
+            <div class="table-section">
+                <div class="section-title"><span class="required">*</span>二、教育程度 EDUCATION</div>
+                <table class="form-table">
+                    <tbody><tr>
+                        <th>級別<br>DEGREE</th>
+                        <th>學校名稱<br>NAME OF SCHOOL</th>
+                        <th>科系<br>MAJOR SUBJECT</th>
+                        <th>在校期間<br>PERIOD</th>
+                        <th>日/夜校<br>DAY/NIGHT</th>
+                        <th>畢業<br>GRADUATE</th>
+                        <th>論文專題<br>ESSAY</th>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">高中<br>HIGH SCHOOL</td>
+                        <td class="input-cell"><input type="text" name="highSchoolName"></td>
+                        <td class="input-cell"><input type="text" name="highSchoolMajor"></td>
+                        <td class="input-cell">
+                            <input type="text" name="highSchoolPeriod" placeholder="YYYY/MM ~ YYYY/MM">
+                        </td>
+                        <td class="input-cell">
+                            <select name="highSchoolType">
+                                <option value="">請選擇</option>
+                                <option value="日校">日校</option>
+                                <option value="夜校">夜校</option>
+                            </select>
+                        </td>
+                        <td class="input-cell">
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="highSchoolGraduate" value="是" id="hsGradYes">
+                                    <label for="hsGradYes">是 YES</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="highSchoolGraduate" value="否" id="hsGradNo">
+                                    <label for="hsGradNo">否 NO</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="input-cell"><input type="text" name="highSchoolEssay"></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">專科<br>JUNIOR COLLEGE</td>
+                        <td class="input-cell"><input type="text" name="collegeName"></td>
+                        <td class="input-cell"><input type="text" name="collegeMajor"></td>
+                        <td class="input-cell">
+                            <input type="text" name="collegePeriod" placeholder="YYYY/MM ~ YYYY/MM">
+                        </td>
+                        <td class="input-cell">
+                            <select name="collegeType">
+                                <option value="">請選擇</option>
+                                <option value="日校">日校</option>
+                                <option value="夜校">夜校</option>
+                            </select>
+                        </td>
+                        <td class="input-cell">
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="collegeGraduate" value="是" id="colGradYes">
+                                    <label for="colGradYes">是 YES</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="collegeGraduate" value="否" id="colGradNo">
+                                    <label for="colGradNo">否 NO</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="input-cell"><input type="text" name="collegeEssay"></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">大學<br>COLLEGE OR UNIVERSITY</td>
+                        <td class="input-cell"><input type="text" name="universityName"></td>
+                        <td class="input-cell"><input type="text" name="universityMajor"></td>
+                        <td class="input-cell">
+                            <input type="text" name="universityPeriod" placeholder="YYYY/MM ~ YYYY/MM">
+                        </td>
+                        <td class="input-cell">
+                            <select name="universityType">
+                                <option value="">請選擇</option>
+                                <option value="日校">日校</option>
+                                <option value="夜校">夜校</option>
+                            </select>
+                        </td>
+                        <td class="input-cell">
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="universityGraduate" value="是" id="uniGradYes">
+                                    <label for="uniGradYes">是 YES</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="universityGraduate" value="否" id="uniGradNo">
+                                    <label for="uniGradNo">否 NO</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="input-cell"><input type="text" name="universityEssay"></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">研究所<br>RESEARCH INSTITUTE</td>
+                        <td class="input-cell"><input type="text" name="graduateName"></td>
+                        <td class="input-cell"><input type="text" name="graduateMajor"></td>
+                        <td class="input-cell">
+                            <input type="text" name="graduatePeriod" placeholder="YYYY/MM ~ YYYY/MM">
+                        </td>
+                        <td class="input-cell">
+                            <select name="graduateType">
+                                <option value="">請選擇</option>
+                                <option value="日校">日校</option>
+                                <option value="夜校">夜校</option>
+                            </select>
+                        </td>
+                        <td class="input-cell">
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="graduateGraduate" value="是" id="gradGradYes">
+                                    <label for="gradGradYes">是 YES</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="graduateGraduate" value="否" id="gradGradNo">
+                                    <label for="gradGradNo">否 NO</label>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="input-cell"><input type="text" name="graduateEssay"></td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 三、工作經歷 -->
+            <div class="table-section">
+                <div class="section-title"><span class="required">*</span>三、工作經歷 WORK EXPERIENCE</div>
+                <table class="form-table">
+                    <tbody><tr>
+                        <th>公司名稱<br>NAME OF COMPANY</th>
+                        <th>部門<br>DEPARTMENT</th>
+                        <th>職稱<br>POSITION</th>
+                        <th colspan="2">薪資 SALARY</th>
+                        <th>服務期間<br>PERIOD</th>
+                        <th>離職原因<br>REASON FOR LEAVING</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>月薪<br>MONTHLY</th>
+                        <th>年薪<br>YEARLY</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </tbody><tbody id="workExperienceList">
+                        <tr class="dynamic-row">
+                            <td class="input-cell"><input type="text" name="workCompany[]"></td>
+                            <td class="input-cell"><input type="text" name="workDepartment[]"></td>
+                            <td class="input-cell"><input type="text" name="workPosition[]"></td>
+                            <td class="input-cell"><input type="number" name="workMonthlySalary[]"></td>
+                            <td class="input-cell"><input type="number" name="workYearlySalary[]"></td>
+                            <td class="input-cell"><input type="text" name="workPeriod[]" placeholder="YYYY/MM ~ YYYY/MM"></td>
+                            <td class="input-cell">
+                                <input type="text" name="workReason[]">
+                                <button type="button" class="remove-btn" onclick="removeWorkRow(this)">刪除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="add-row-btn" onclick="addWorkRow()">新增工作經歷</button>
+                
+                <!-- 目前薪資與期望待遇 -->
+                <table class="form-table" style="margin-top: 15px;">
+                    <tbody><tr>
+                        <td class="label-cell">目前任職公司薪資<br>CURRENT SALARY</td>
+                        <td class="input-cell">
+                            月薪：<input type="number" name="currentMonthlySalary" style="width: 100px;"> 元；
+                            年薪：<input type="number" name="currentAnnualSalary" style="width: 100px;"> 元
+                            <div class="note">※若待業者，請以最近一份工作的薪資待遇填寫。<br>錄取報到當日，請提供薪資證明，以備查核!!!</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">希望待遇<br>EXPECTED SALARY</td>
+                        <td class="input-cell">
+                            月薪：<input type="number" name="expectedMonthlySalary" style="width: 100px;"> 元；
+                            年薪：<input type="number" name="expectedAnnualSalary" style="width: 100px;"> 元
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">可報到日<br>REPORTING DATE</td>
+                        <td class="input-cell">
+                            <input type="date" name="reportingDate" style="width: 150px;"> ；
+                            通知後 <input type="number" name="notificationDays" style="width: 60px;"> 日
+                        </td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 四、專業訓練或專長 -->
+            <div class="table-section">
+                <div class="section-title"><span class="required">*</span>四、專業訓練或專長 OTHER CERTIFICATION</div>
+                <table class="form-table">
+                    <tbody><tr>
+                        <th>受訓課程<br>TRAINING COURSE</th>
+                        <th>訓練機構<br>TRAINING DEPT.</th>
+                        <th>總時數<br>TOTAL HOURS</th>
+                        <th>持有證書<br>CERTIFICATION</th>
+                        <th>備註<br>REMARK</th>
+                    </tr>
+                    </tbody><tbody id="trainingList">
+                        <tr class="dynamic-row">
+                            <td class="input-cell"><input type="text" name="trainingCourse[]"></td>
+                            <td class="input-cell"><input type="text" name="trainingInstitute[]"></td>
+                            <td class="input-cell"><input type="number" name="trainingHours[]"></td>
+                            <td class="input-cell">
+                                <div class="radio-group">
+                                    <div class="radio-item">
+                                        <input type="radio" name="trainingCert[]" value="是">
+                                        <label>是 YES</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" name="trainingCert[]" value="否">
+                                        <label>否 NO</label>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="input-cell">
+                                <input type="text" name="trainingRemark[]">
+                                <button type="button" class="remove-btn" onclick="removeTrainingRow(this)">刪除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="add-row-btn" onclick="addTrainingRow()">新增專業訓練</button>
+            </div>
+
+            <!-- 五、語文能力與六、電腦技能 -->
+            <div class="table-section">
+                <table class="form-table">
+                    <tbody><tr>
+                        <th colspan="5"><span class="required">*</span>五、語文能力 LANGUAGE</th>
+                        <th colspan="5"><span class="required">*</span>六、電腦技能 COMPUTER SKILL</th>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">語言<br>LANGUAGE</td>
+                        <td colspan="4" class="label-cell">1.精通 2.良好 3.普通 4.略懂<br>1.FLUENT 2.GOOD 3.USABLE 4.SLIGHTLY</td>
+                        <td colspan="3" class="input-cell">
+                            <div style="font-size: 11px;">
+                                1.辦公室應用：<br>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item"><input type="checkbox" name="computerSkill" value="WORD"><label>WORD</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="computerSkill" value="EXCEL"><label>EXCEL</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="computerSkill" value="POWERPOINT"><label>POWERPOINT</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="computerSkill" value="OUTLOOK"><label>OUTLOOK</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="computerSkill" value="PROJECT"><label>PROJECT</label></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">國語 CHINESE</td>
+                        <td class="input-cell">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px;">
+                                <div>聽 LISTEN: 
+                                    <select name="chineseListen" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>說 SPEAK: 
+                                    <select name="chineseSpeak" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>讀 READ: 
+                                    <select name="chineseRead" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>寫 WRITE: 
+                                    <select name="chineseWrite" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="4" class="input-cell">
+                            <div style="font-size: 11px;">
+                                2.作業系統：<br>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item"><input type="checkbox" name="operatingSystem" value="WIN OS"><label>WIN OS</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="operatingSystem" value="WIN SERVER"><label>WIN SERVER</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="operatingSystem" value="LINUX"><label>LINUX</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="operatingSystem" value="VMware"><label>VMware</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="operatingSystem" value="Hyper-V"><label>Hyper-V</label></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">英語 ENGLISH</td>
+                        <td class="input-cell">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px;">
+                                <div>聽 LISTEN: 
+                                    <select name="englishListen" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>說 SPEAK: 
+                                    <select name="englishSpeak" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>讀 READ: 
+                                    <select name="englishRead" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>寫 WRITE: 
+                                    <select name="englishWrite" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="4" class="input-cell">
+
+                            <div style="font-size: 11px;">
+                                3.資料庫：<br>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item"><input type="checkbox" name="database" value="MS SQL"><label>MS SQL</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="database" value="ORACLE"><label>ORACLE</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="database" value="MYSQL"><label>MYSQL</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="database" value="ACCESS"><label>ACCESS</label></div>
+                                    <div class="checkbox-item">OTHER <input type="text" name="databaseOther" style="width: 80px;"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">日語 JAPANESE</td>
+                        <td class="input-cell">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px;">
+                                <div>聽 LISTEN: 
+                                    <select name="japaneseListen" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>說 SPEAK: 
+                                    <select name="japaneseSpeak" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>讀 READ: 
+                                    <select name="japaneseRead" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>寫 WRITE: 
+                                    <select name="japaneseWrite" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="4" class="input-cell">
+
+                            <div style="font-size: 11px;">
+                                4.繪圖軟體：<br>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item"><input type="checkbox" name="designSoftware" value="PRO/E"><label>PRO/E</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="designSoftware" value="SOLID WORKS"><label>SOLID WORKS</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="designSoftware" value="AUTOCAD"><label>AUTOCAD</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="designSoftware" value="COREL DRAW"><label>COREL DRAW</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="designSoftware" value="PHOTOSHOP"><label>PHOTOSHOP</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="designSoftware" value="ILLUSTRATOR"><label>ILLUSTRATOR</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="designSoftware" value="3Dmax"><label>3Dmax</label></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">台語 DIALECT</td>
+                        <td class="input-cell">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px;">
+                                <div>聽 LISTEN: 
+                                    <select name="dialectListen" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>說 SPEAK: 
+                                    <select name="dialectSpeak" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>讀 READ: 
+                                    <select name="dialectRead" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>寫 WRITE: 
+                                    <select name="dialectWrite" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="4" class="input-cell">
+                            <div style="font-size: 11px;">
+                                5.網頁技術：<br>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-item"><input type="checkbox" name="webTech" value="FRONTPAGE"><label>FRONTPAGE</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="webTech" value="HTML"><label>HTML</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="webTech" value="DHTML"><label>DHTML</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="webTech" value="FIREWORKS"><label>FIREWORKS</label></div>
+                                    <div class="checkbox-item"><input type="checkbox" name="webTech" value="FLASH"><label>FLASH</label></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">其他語言</td>
+                        <td class="input-cell">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px;">
+                                <div>聽 LISTEN: 
+                                    <select name="otherLangListen" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>說 SPEAK: 
+                                    <select name="otherLangSpeak" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>讀 READ: 
+                                    <select name="otherLangRead" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                                <div>寫 WRITE: 
+                                    <select name="otherLangWrite" style="width: 70px;">
+                                        <option value="">選擇</option>
+                                        <option value="1">精通</option>
+                                        <option value="2">良好</option>
+                                        <option value="3">普通</option>
+                                        <option value="4">略懂</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="margin-top: 5px; font-size: 11px;">
+                                語言名稱：<input type="text" name="otherLangName" placeholder="請填寫語言名稱" style="width: 150px;">
+                            </div>
+                        </td>
+                        <td colspan="4" class="input-cell">
+                            <div style="font-size: 11px;">
+                                6.應用軟體：SAP OTHER <input type="text" name="applicationSoftware" style="width: 100px;"><br><br>
+                                7.其他 OTHER：<input type="text" name="otherSkills" style="width: 150px;">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 七、家庭概況 -->
+            <div class="table-section">
+                <div class="section-title">七、家庭概況 FAMILY INFO.</div>
+                <table class="form-table">
+                    <tbody><tr>
+                        <th>關係<br>RELATION</th>
+                        <th>姓名<br>NAME</th>
+                        <th>年齡<br>AGE</th>
+                        <th>職業<br>OCCUPATION</th>
+                    </tr>
+                    </tbody><tbody id="familyList">
+                        <tr class="dynamic-row">
+                            <td class="input-cell"><input type="text" name="familyRelation[]"></td>
+                            <td class="input-cell"><input type="text" name="familyName[]"></td>
+                            <td class="input-cell"><input type="number" name="familyAge[]"></td>
+                            <td class="input-cell">
+                                <input type="text" name="familyOccupation[]">
+                                <button type="button" class="remove-btn" onclick="removeFamilyRow(this)">刪除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="add-row-btn" onclick="addFamilyRow()">新增家庭成員</button>
+                
+                <table class="form-table" style="margin-top: 15px;">
+                    <tbody><tr>
+                        <td class="label-cell">家庭經濟狀況<br>ECONOMY STATUS</td>
+                        <td class="input-cell">
+                            <textarea name="familyEconomicStatus" rows="3" style="width: 100%;"></textarea>
+                        </td>
+                        <td class="label-cell">有無親人或朋友在本公司上班？<br>HAVE FAMILY OR FRIEND IN AOI？</td>
+                        <td class="input-cell">
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="hasRelativeInCompany" value="無" id="noRelativeInCompany">
+                                    <label for="noRelativeInCompany">無 NO</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="hasRelativeInCompany" value="有" id="hasRelativeInCompany">
+                                    <label for="hasRelativeInCompany">有 YES</label>
+                                </div>
+                            </div>
+                            <div style="margin-top: 5px;">
+                                關係：<input type="text" name="relativeRelation" style="width: 80px;">
+                                姓名：<input type="text" name="relativeName" style="width: 80px;">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 八、面談問題 -->
+            <div class="table-section">
+                <div class="section-title"><span class="required">*</span>八、為方便面談進行，使公司儘速瞭解您的想法與現況，請填寫下列問題 OPENING QUESTIONS</div>
+                <table class="form-table">
+                    <tbody><tr>
+                        <td class="input-cell" colspan="2">
+                            <strong>1.您應徵本工作之動機？WHAT DO YOU HOPE TO ACHIEVE FROM THIS JOB？</strong><br>
+                            <textarea name="jobMotivation" rows="4" style="width: 100%; margin-top: 10px;" required=""></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="input-cell" colspan="2">
+                            <strong>2.您的優缺點為何？(各列3項)WHAT ARE YOUR STRENGTHS AND WEAKNESSES（LINE 3）？</strong>
+                            <table style="width: 100%; margin-top: 10px;">
+                                <tbody><tr>
+                                    <th style="width: 50%; background: #f8f4ff; color: #7b4397;">優點 STRENGTHS</th>
+                                    <th style="width: 50%; background: #f8f4ff; color: #7b4397;">缺點 WEAKNESSES</th>
+                                </tr>
+                                <tr>
+                                    <td style="vertical-align: top; padding: 10px;">
+                                        1. <input type="text" name="strength1" style="width: 90%;"><br><br>
+                                        2. <input type="text" name="strength2" style="width: 90%;"><br><br>
+                                        3. <input type="text" name="strength3" style="width: 90%;">
+                                    </td>
+                                    <td style="vertical-align: top; padding: 10px;">
+                                        1. <input type="text" name="weakness1" style="width: 90%;"><br><br>
+                                        2. <input type="text" name="weakness2" style="width: 90%;"><br><br>
+                                        3. <input type="text" name="weakness3" style="width: 90%;">
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="input-cell" colspan="2">
+                            <strong>3.請列出熟悉您品德及才能的推薦者 CONTACTABLE REFERENCES</strong>
+                            <table class="form-table" style="width: 100%; margin-top: 10px;">
+                                <tbody><tr>
+                                    <th>關係 RELATION</th>
+                                    <th>姓名 NAME</th>
+                                    <th>任職機構 COMPANY</th>
+                                    <th>職稱 POSITION</th>
+                                    <th>電話號碼 CONTACT NO.</th>
+                                </tr>
+                                </tbody><tbody id="referenceList">
+                                    <tr class="dynamic-row">
+                                        <td class="input-cell"><input type="text" name="refRelation[]"></td>
+                                        <td class="input-cell"><input type="text" name="refName[]"></td>
+                                        <td class="input-cell"><input type="text" name="refCompany[]"></td>
+                                        <td class="input-cell"><input type="text" name="refPosition[]"></td>
+                                        <td class="input-cell">
+                                            <input type="tel" name="refPhone[]">
+                                            <button type="button" class="remove-btn" onclick="removeReferenceRow(this)">刪除</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="add-row-btn" onclick="addReferenceRow()">新增推薦者</button>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </div>
+
+            <!-- 簽名區域 -->
+            <div class="signature-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <strong>※應徵者親簽 SIGNATURE：</strong>
+                        <canvas id="signatureCanvas" class="signature-canvas" width="300" height="120"></canvas>
+                        <div class="signature-controls">
+                            <button type="button" class="signature-btn clear" onclick="clearSignature()">清除簽名</button>
+                        </div>
+                       
+                    </div>
+                    <div>
+                        <strong>日期 DATE：</strong>
+                        <div style="margin: 20px 0;">
+                            <input type="date" name="signatureDate" style="width: 150px; text-align: center; padding: 10px; font-size: 14px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="font-size: 12px; line-height: 1.5; margin-bottom: 20px;">
+                    <strong>本人允許查核本表內所列各項資料，如有虛報情事，願受解職處分。</strong><br>
+                    THE INFORMATION ON THIS APPLICATION IS ACCURATE AND SUBJECT TO CHECK BY THE AOI. I UNDERSTAND THAT PROVIDING ANY MISLEADING OR INCORRECT INFORMATION WILL RENDER THIS APPLICATION VOID AND WILL BE CAUSE FOR TERMINATION IN THE EVENT OF EMPLOYMENT. I HEREBY GIVE PERMISSION TO AOI OR ITS DULY AUTHORIZED REPRESENTATIVE TO CONTACT ANY PERSONS OR COMPANIES NAMES IN THIS APPLICATION OTHER THAN MY PRESENT EMPLOYER.
+                </div>
+                
+                <div class="loading" id="loading">
+                    <p style="color: #7b4397; font-size: 16px;">🔄 正在生成PDF履歷表...</p>
+                    <p style="color: #666; font-size: 14px;">請稍候，系統正在處理您的履歷資料</p>
+                </div>
+                
+                <button type="submit" class="submit-btn">📄 提交履歷表</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // 全域變數
+        var canvas = null;
+        var ctx = null;
+        var isDrawing = false;
+        var signatureData = [];
+        var currentPath = [];
+
+        // 頁面載入完成後執行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('頁面載入完成，開始初始化所有功能...');
+            
+            // 初始化簽名畫布
+            initializeSignature();
+            
+            // 設定今天的日期
+            setTodayDate();
+            
+            // 綁定照片上傳事件
+            setupPhotoUpload();
+            
+            // 綁定地址複製事件
+            setupAddressCopy();
+            
+            console.log('所有功能初始化完成');
+        });
+
+        // 初始化簽名功能
+        function initializeSignature() {
+            canvas = document.getElementById('signatureCanvas');
+            if (!canvas) {
+                console.error('找不到簽名畫布');
+                return;
+            }
+            
+            ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('無法獲取畫布上下文');
+                return;
+            }
+            
+            // 設定畫筆樣式
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // 綁定事件
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // 觸控事件
+            canvas.addEventListener('touchstart', handleTouch, { passive: false });
+            canvas.addEventListener('touchmove', handleTouch, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing, { passive: false });
+            
+            console.log('簽名畫布初始化完成');
+        }
+
+        // 簽名相關函數
+        function startDrawing(e) {
+            if (!canvas || !ctx) return;
+            isDrawing = true;
+            currentPath = [];
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            currentPath.push({x, y});
+        }
+
+        function draw(e) {
+            if (!isDrawing || !canvas || !ctx) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            currentPath.push({x, y});
+        }
+
+        function stopDrawing() {
+            if (isDrawing && currentPath.length > 0) {
+                signatureData.push([...currentPath]);
+            }
+            isDrawing = false;
+            currentPath = [];
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(
+                e.type === 'touchstart' ? 'mousedown' : 
+                e.type === 'touchmove' ? 'mousemove' : 'mouseup',
+                {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                }
+            );
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearSignature() {
+            console.log('清除簽名被調用');
+            if (!canvas || !ctx) {
+                console.error('畫布未初始化');
+                return;
+            }
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            signatureData = [];
+            currentPath = [];
+            console.log('簽名已清除');
+        }
+
+        function undoSignature() {
+            console.log('復原簽名被調用');
+            if (signatureData.length > 0) {
+                signatureData.pop();
+                redrawSignature();
+                console.log('復原完成');
+            } else {
+                console.log('沒有可復原的內容');
+            }
+        }
+
+        function redrawSignature() {
+            if (!canvas || !ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            signatureData.forEach(path => {
+                if (path.length > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(path[0].x, path[0].y);
+                    for (let i = 1; i < path.length; i++) {
+                        ctx.lineTo(path[i].x, path[i].y);
+                    }
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function getSignatureImage() {
+            if (!canvas) return null;
+            return canvas.toDataURL('image/png');
+        }
+
+        function hasSignature() {
+            return signatureData.length > 0;
+        }
+
+        // 動態新增功能
+        function addWorkRow() {
+            console.log('新增工作經歷被調用');
+            const tbody = document.getElementById('workExperienceList');
+            if (!tbody) {
+                console.error('找不到工作經歷列表');
+                return;
+            }
+            
+            const newRow = document.createElement('tr');
+            newRow.className = 'dynamic-row';
+            newRow.innerHTML = `
+                <td class="input-cell"><input type="text" name="workCompany[]"></td>
+                <td class="input-cell"><input type="text" name="workDepartment[]"></td>
+                <td class="input-cell"><input type="text" name="workPosition[]"></td>
+                <td class="input-cell"><input type="number" name="workMonthlySalary[]"></td>
+                <td class="input-cell"><input type="number" name="workYearlySalary[]"></td>
+                <td class="input-cell"><input type="text" name="workPeriod[]" placeholder="YYYY/MM ~ YYYY/MM"></td>
+                <td class="input-cell">
+                    <input type="text" name="workReason[]">
+                    <button type="button" class="remove-btn" onclick="removeWorkRow(this)">刪除</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+            console.log('工作經歷行已新增');
+        }
+
+        function removeWorkRow(button) {
+            console.log('刪除工作經歷被調用');
+            button.closest('tr').remove();
+            console.log('工作經歷行已刪除');
+        }
+
+        function addTrainingRow() {
+            console.log('新增專業訓練被調用');
+            const tbody = document.getElementById('trainingList');
+            if (!tbody) {
+                console.error('找不到專業訓練列表');
+                return;
+            }
+            
+            const rowIndex = tbody.children.length;
+            const newRow = document.createElement('tr');
+            newRow.className = 'dynamic-row';
+            newRow.innerHTML = `
+                <td class="input-cell"><input type="text" name="trainingCourse[]"></td>
+                <td class="input-cell"><input type="text" name="trainingInstitute[]"></td>
+                <td class="input-cell"><input type="number" name="trainingHours[]"></td>
+                <td class="input-cell">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="trainingCert_${rowIndex}" value="是">
+                            <label>是 YES</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="trainingCert_${rowIndex}" value="否">
+                            <label>否 NO</label>
+                        </div>
+                    </div>
+                </td>
+                <td class="input-cell">
+                    <input type="text" name="trainingRemark[]">
+                    <button type="button" class="remove-btn" onclick="removeTrainingRow(this)">刪除</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+            console.log('專業訓練行已新增');
+        }
+
+        function removeTrainingRow(button) {
+            console.log('刪除專業訓練被調用');
+            button.closest('tr').remove();
+            console.log('專業訓練行已刪除');
+        }
+
+        function addFamilyRow() {
+            console.log('新增家庭成員被調用');
+            const tbody = document.getElementById('familyList');
+            if (!tbody) {
+                console.error('找不到家庭成員列表');
+                return;
+            }
+            
+            const newRow = document.createElement('tr');
+            newRow.className = 'dynamic-row';
+            newRow.innerHTML = `
+                <td class="input-cell"><input type="text" name="familyRelation[]"></td>
+                <td class="input-cell"><input type="text" name="familyName[]"></td>
+                <td class="input-cell"><input type="number" name="familyAge[]"></td>
+                <td class="input-cell">
+                    <input type="text" name="familyOccupation[]">
+                    <button type="button" class="remove-btn" onclick="removeFamilyRow(this)">刪除</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+            console.log('家庭成員行已新增');
+        }
+
+        function removeFamilyRow(button) {
+            console.log('刪除家庭成員被調用');
+            button.closest('tr').remove();
+            console.log('家庭成員行已刪除');
+        }
+
+        function addReferenceRow() {
+            console.log('新增推薦者被調用');
+            const tbody = document.getElementById('referenceList');
+            if (!tbody) {
+                console.error('找不到推薦者列表');
+                return;
+            }
+            
+            const newRow = document.createElement('tr');
+            newRow.className = 'dynamic-row';
+            newRow.innerHTML = `
+                <td class="input-cell"><input type="text" name="refRelation[]"></td>
+                <td class="input-cell"><input type="text" name="refName[]"></td>
+                <td class="input-cell"><input type="text" name="refCompany[]"></td>
+                <td class="input-cell"><input type="text" name="refPosition[]"></td>
+                <td class="input-cell">
+                    <input type="tel" name="refPhone[]">
+                    <button type="button" class="remove-btn" onclick="removeReferenceRow(this)">刪除</button>
+                </td>
+            `;
+            tbody.appendChild(newRow);
+            console.log('推薦者行已新增');
+        }
+
+        function removeReferenceRow(button) {
+            console.log('刪除推薦者被調用');
+            button.closest('tr').remove();
+            console.log('推薦者行已刪除');
+        }
+
+        // 地址複製功能
+        function copyAddress() {
+            console.log('複製地址被調用');
+            const sameAddress = document.getElementById('sameAddress');
+            const permanentAddress = document.querySelector('input[name="permanentAddress"]');
+            const presentAddress = document.querySelector('input[name="presentAddress"]');
+            
+            if (sameAddress && sameAddress.checked && permanentAddress && presentAddress) {
+                presentAddress.value = permanentAddress.value;
+                console.log('地址已複製');
+            } else {
+                if (presentAddress) presentAddress.value = '';
+                console.log('地址已清空');
+            }
+        }
+
+        // 設定今天日期
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[name="signatureDate"], input[name="applicationDate"]');
+            dateInputs.forEach(input => {
+                if (input) input.value = today;
+            });
+        }
+
+        // 照片上傳設定
+        function setupPhotoUpload() {
+            const photoInput = document.querySelector('input[type="file"]');
+            if (photoInput) {
+                photoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('照片檔案過大，請選擇小於5MB的圖片');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        if (!file.type.match('image.*')) {
+                            alert('請選擇圖片檔案');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const placeholder = document.querySelector('.photo-placeholder');
+                            if (placeholder) {
+                                placeholder.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 5px;" alt="照片預覽">`;
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+
+        // 地址複製設定
+        function setupAddressCopy() {
+            const permanentAddressInput = document.querySelector('input[name="permanentAddress"]');
+            if (permanentAddressInput) {
+                permanentAddressInput.addEventListener('input', function() {
+                    const sameAddress = document.getElementById('sameAddress');
+                    if (sameAddress && sameAddress.checked) {
+                        copyAddress();
+                    }
+                });
+            }
+        }
+
+        // 測試所有功能
+        function testAllButtons() {
+            console.log('=== 開始測試所有按鍵功能 ===');
+            
+            // 測試簽名功能
+            console.log('1. 測試簽名功能:');
+            try {
+                clearSignature();
+                console.log('✅ clearSignature 正常');
+            } catch (e) {
+                console.log('❌ clearSignature 錯誤:', e);
+            }
+            
+            try {
+                undoSignature();
+                console.log('✅ undoSignature 正常');
+            } catch (e) {
+                console.log('❌ undoSignature 錯誤:', e);
+            }
+            
+            // 測試動態新增功能
+            console.log('2. 測試動態新增功能:');
+            const testFunctions = [
+                'addWorkRow', 'addTrainingRow', 'addFamilyRow', 'addReferenceRow'
+            ];
+            
+            testFunctions.forEach(funcName => {
+                try {
+                    window[funcName]();
+                    console.log(`✅ ${funcName} 正常`);
+                } catch (e) {
+                    console.log(`❌ ${funcName} 錯誤:`, e);
+                }
+            });
+            
+            // 測試其他功能
+            console.log('3. 測試其他功能:');
+            try {
+                copyAddress();
+                console.log('✅ copyAddress 正常');
+            } catch (e) {
+                console.log('❌ copyAddress 錯誤:', e);
+            }
+            
+            console.log('=== 測試完成 ===');
+            alert('測試完成！請檢查控制台(F12)查看詳細結果');
+        }
+
+        // 將所有函數註冊到全域
+        window.clearSignature = clearSignature;
+        window.undoSignature = undoSignature;
+        window.addWorkRow = addWorkRow;
+        window.removeWorkRow = removeWorkRow;
+        window.addTrainingRow = addTrainingRow;
+        window.removeTrainingRow = removeTrainingRow;
+        window.addFamilyRow = addFamilyRow;
+        window.removeFamilyRow = removeFamilyRow;
+        window.addReferenceRow = addReferenceRow;
+        window.removeReferenceRow = removeReferenceRow;
+        window.copyAddress = copyAddress;
+        window.testAllButtons = testAllButtons;
+
+        console.log('所有函數已註冊到全域範圍');
+
+        // 表單驗證
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('input[required], textarea[required]');
+            let isValid = true;
+            let missingFields = [];
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#dc3545';
+                    field.style.backgroundColor = '#fff5f5';
+                    isValid = false;
+                    
+                    // 獲取欄位標籤
+                    const label = field.closest('tr')?.querySelector('td.label-cell')?.textContent || 
+                                 field.previousElementSibling?.textContent || 
+                                 field.name;
+                    if (label) {
+                        missingFields.push(label.replace('*', '').trim());
+                    }
+                } else {
+                    field.style.borderColor = '#ddd';
+                    field.style.backgroundColor = 'white';
+                }
+            });
+            
+            if (!isValid && missingFields.length > 0) {
+                alert(`❌ 請填寫以下必填欄位：\n\n${missingFields.join('\n')}`);
+            }
+            
+            return isValid;
+        }
+
+        // 表單提交處理
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('resumeForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // 表單驗證
+                    if (!validateForm()) {
+                        return;
+                    }
+                    
+                    // 檢查簽名
+                    if (!hasSignature()) {
+                        alert('請先簽名！');
+                        return;
+                    }
+                    
+                    // 顯示載入狀態
+                    const loadingDiv = document.getElementById('loading');
+                    if (loadingDiv) {
+                        loadingDiv.classList.add('show');
+                    }
+                    
+                    // 收集表單資料
+                    const formData = new FormData(this);
+                    const resumeData = {};
+                    
+                    // 處理一般欄位
+                    for (let [key, value] of formData.entries()) {
+                        if (key.includes('[]')) {
+                            const cleanKey = key.replace('[]', '');
+                            if (!resumeData[cleanKey]) {
+                                resumeData[cleanKey] = [];
+                            }
+                            resumeData[cleanKey].push(value);
+                        } else {
+                            resumeData[key] = value;
+                        }
+                    }
+                    
+                    // 處理複選框
+                    const checkboxGroups = ['transport', 'license', 'computerSkill', 'operatingSystem', 'database', 'designSoftware', 'webTech'];
+                    checkboxGroups.forEach(group => {
+                        const checkboxes = document.querySelectorAll(`input[name="${group}"]:checked`);
+                        resumeData[group] = Array.from(checkboxes).map(cb => cb.value);
+                    });
+                    
+                    // 添加簽名圖片
+                    resumeData.signatureImage = getSignatureImage();
+                    
+                    // 同時執行PDF生成和Google Sheets傳送
+                    Promise.all([
+                        generatePDF(resumeData),
+                        sendToGoogleSheets(resumeData)
+                    ]).then(() => {
+                        if (loadingDiv) {
+                            loadingDiv.classList.remove('show');
+                        }
+                        alert('✅ 履歷表已成功提交！\n\n📄 PDF已下載到您的電腦\n📊 資料已儲存到Google試算表\n📧 請將PDF發送至：hannah20000830@gmail.com');
+                    }).catch(error => {
+                        console.error('提交過程發生錯誤:', error);
+                        if (loadingDiv) {
+                            loadingDiv.classList.remove('show');
+                        }
+                        alert('❌ 提交過程中發生錯誤，請稍後再試');
+                    });
+                });
+            }
+        });
+
+        // Google Sheets 傳送功能
+        function sendToGoogleSheets(resumeData) {
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbwArBABIF8MiDJW5zKjPWPIEI1nYORQhRWzujH344NzddRRdwV0maV3nv6Wg37rB29D/exec';
+            
+            return fetch(scriptURL, {
+                method: "POST",
+                body: JSON.stringify(resumeData),
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(response => {
+                console.log("✅ 已成功送出到 Google Sheet", response);
+                return response;
+            })
+            .catch(error => {
+                console.error("❌ Google Sheets 發送失敗：", error);
+                // 不要中斷整個流程，只記錄錯誤
+                return { error: error.message };
+            });
+        }
+
+        // 生成PDF函數（回傳Promise）
+        function generatePDF(data) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF('p', 'mm', 'a4');
+                    
+                    // 設定中文字體
+                    doc.setFont('helvetica');
+                    
+                    let yPos = 20;
+                    const lineHeight = 5;
+                    const pageHeight = 297;
+                    const leftMargin = 20;
+                    const rightMargin = 190;
+                    
+                    // 表頭
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('英屬維京群島商祥茂光電科技股份有限公司台灣分公司', 105, yPos, { align: 'center' });
+                    yPos += 6;
+                    doc.setFontSize(12);
+                    doc.text('Prime World International Holdings Ltd., Taiwan Branch', 105, yPos, { align: 'center' });
+                    yPos += 8;
+                    doc.setFontSize(16);
+                    doc.text('應徵人員履歷表 RESUME', 105, yPos, { align: 'center' });
+                    yPos += 10;
+                    
+                    // HR-4004G
+                    doc.setFontSize(10);
+                    doc.text('HR-4004G', 180, 15);
+                    
+                    // 編號和基本資訊
+                    doc.setFontSize(10);
+                    doc.text(`編號：${data.number || '由公司填寫'}`, leftMargin, yPos);
+                    doc.text(`應徵職務：${data.position || ''}`, 70, yPos);
+                    doc.text(`報到日：${data.reportDate || ''}`, 140, yPos);
+                    yPos += 8;
+                    
+                    // 分隔線
+                    doc.line(leftMargin, yPos, rightMargin, yPos);
+                    yPos += 5;
+                    
+                    // 一、個人基本資料
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('一、個人基本資料 PERSONAL INFO.', leftMargin, yPos);
+                    yPos += 6;
+                    
+                    // 基本資料內容
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    
+                    const personalInfo = [
+                        `中文姓名：${data.chineseName || ''}  |  英文名：${data.englishName || ''}  |  性別：${data.gender || ''}`,
+                        `出生地：${data.birthPlace || ''}  |  身份證號：${data.idNumber || ''}`,
+                        `生日：${data.birthday || ''}  |  婚姻：${data.marital || ''}`,
+                        `駕照：${data.license || ''}  |  交通工具：${(data.transport || []).join(', ')}`,
+                        `電郵：${data.email || ''}`,
+                        `戶籍地址：${data.permanentAddress || ''}  |  電話：${data.phone || ''}`,
+                        `通訊地址：${data.presentAddress || ''}  |  行動電話：${data.mobile || ''}`,
+                        `緊急聯絡人：${data.emergencyContact || ''}  |  關係：${data.relationship || ''}  |  電話：${data.emergencyPhone || ''}`
+                    ];
+                    
+                    personalInfo.forEach(info => {
+                        if (yPos > pageHeight - 20) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        const lines = doc.splitTextToSize(info, rightMargin - leftMargin);
+                        lines.forEach(line => {
+                            doc.text(line, leftMargin, yPos);
+                            yPos += lineHeight;
+                        });
+                    });
+                    
+                    // 簽名區域
+                    if (yPos > pageHeight - 40) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    
+                    // 添加簽名圖片
+                    if (data.signatureImage) {
+                        doc.text('應徵者簽名：', leftMargin, yPos);
+                        
+                        // 將簽名圖片添加到PDF中
+                        try {
+                            doc.addImage(data.signatureImage, 'PNG', leftMargin + 5, yPos + 2, 60, 24);
+                        } catch (error) {
+                            console.log('簽名圖片添加失敗:', error);
+                        }
+                        
+                        yPos += 30;
+                    } else {
+                        doc.text(`應徵者簽名：${data.applicantSignature || ''}`, leftMargin, yPos);
+                        yPos += 8;
+                    }
+                    
+                    doc.text(`簽名者姓名：${data.applicantSignature || ''}`, leftMargin, yPos);
+                    doc.text(`日期：${data.signatureDate || ''}`, 120, yPos);
+                    yPos += 10;
+                    
+                    doc.setFontSize(8);
+                    const disclaimerText = '本人允許查核本表內所列各項資料，如有虛報情事，願受解職處分。';
+                    const disclaimerLines = doc.splitTextToSize(disclaimerText, rightMargin - leftMargin);
+                    disclaimerLines.forEach(line => {
+                        doc.text(line, leftMargin, yPos);
+                        yPos += 4;
+                    });
+                    
+                    // 生成PDF並下載
+                    const pdfBlob = doc.output('blob');
+                    const fileName = `履歷表_${data.applicantSignature || data.chineseName || 'Unknown'}_${new Date().toISOString().split('T')[0]}.pdf`;
+                    
+                    // 下載PDF
+                    const url = URL.createObjectURL(pdfBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    console.log('PDF已生成並下載:', fileName);
+                    resolve(fileName);
+                    
+                } catch (error) {
+                    console.error('PDF生成錯誤:', error);
+                    reject(error);
+                }
+            });
+        }
+    </script>
+
+</body></html>
