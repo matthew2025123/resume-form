@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>客戶需求填寫</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Microsoft JhengHei', sans-serif;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+    }
+    .container div {
+      margin-bottom: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>客戶需求填寫表單</h2>
+    <form id="customerForm">
+      <div>
+        <label>您的姓名：</label>
+        <input id="nameValue" name="name" type="text" required>
+      </div>
+      <div>
+        <label>您的電話：</label>
+        <input id="phoneValue" name="phone" type="text" required>
+      </div>
+      <div>
+        <label>您的需求：</label>
+        <input id="demandValue" name="demand" type="text" required>
+      </div>
+      <button type="submit">送出</button>
+    </form>
+  </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby1D8p-hY1cDkO_dYKL2-p_Acd2QKCZ8gyc-EDyNsJapFCE5RlylhnByUWJZ9VC_gPq3A/exec'; // ← 替換成你的 Web App URL
+
+    document.getElementById('customerForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(res => {
+        alert("提交成功！");
+        form.reset();
+      })
+      .catch(error => {
+        console.error("提交錯誤", error);
+        alert("提交失敗，請稍後再試！");
+      });
+    });
+  </script>
+</body>
+</html>
