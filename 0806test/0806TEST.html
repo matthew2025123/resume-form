@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客戶需求填寫</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      width: 500px;
+      background-color: #f9f9f9;
+    }
+    .container div {
+      margin-bottom: 12px;
+    }
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="formContainer">
+    <div>
+      <label>您的姓名：</label>
+      <input id="nameValue" type="text" />
+    </div>
+    <div>
+      <label>您的大名：</label>
+      <input id="fullnameValue" type="text" />
+    </div>
+    <div>
+      <label>您的電話：</label>
+      <input id="phoneValue" type="text" />
+    </div>
+    <div>
+      <label>您的需求：</label>
+      <input id="demandValue" type="text" />
+    </div>
+    <button onclick="sendForm()">送出</button>
+  </div>
+
+  <script>
+    async function sendForm() {
+      // 先做截圖
+      const container = document.getElementById("formContainer");
+      const canvas = await html2canvas(container);
+      const imageData = canvas.toDataURL('image/png');
+
+      // 傳送到 Google Apps Script Web App
+      const response = await fetch("https://script.google.com/macros/s/你的_web_app_url/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          image: imageData,
+          to: "你的email@example.com"
+        })
+      });
+
+      const result = await response.json();
+      if (result.result === 'success') {
+        alert("✅ 表單截圖已成功寄出！");
+      } else {
+        alert("❌ 發送失敗：" + result.message);
+      }
+    }
+  </script>
+</body>
+</html>
